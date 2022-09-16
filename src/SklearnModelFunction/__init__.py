@@ -12,15 +12,18 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
     try: 
         req_body = req.get_body()
     except ValueError: 
-        return func.HttpResponse("No body passed",status_code=400)
+        return func.HttpResponse("Bad request: no body",status_code=500)
     
-    df = pd.DataFrame.from_dict(eval(req_body))
-    df.drop('ArrDelay', axis=1, inplace=True)
-    df.drop('Carrier', axis=1, inplace=True)
-    
+    parsed_body = eval(req_body)
+    try: 
+        df = pd.DataFrame.from_dict(parsed_body)
+        df.drop('ArrDelay', axis=1, inplace=True)
+        df.drop('Carrier', axis=1, inplace=True)
+        
 
-    model = joblib.load(pathlib.Path(__file__).parent / 'model.joblib')
-    result = model.predict(df)
+        model = joblib.load(pathlib.Path(__file__).parent / 'model.joblib')
+        result = model.predict(df)
 
-    return func.HttpResponse(str(result))
-    
+        return func.HttpResponse(str(result))
+    except ValueError:
+        return func.HttpResponse("Bad request: invalid body structure",status_code=400)

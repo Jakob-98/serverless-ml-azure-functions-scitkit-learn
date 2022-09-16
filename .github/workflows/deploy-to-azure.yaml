@@ -1,0 +1,90 @@
+name: azure-deploy
+
+env:
+  AZURE_RESOURCE_GROUP_NAME: 'git-actions-deploy-func-demo'
+  AZURE_FUNCTIONAPP_NAME: 'func-sklearnmodel-test'
+  SOURCE_FUNCTION_PATH: '${{ github.workspace }}/src/SklearnModelFunction'
+  BUILD_PACKAGE_NAME: 'az-func.zip'
+  ZIP_OUTPUT_PATH: '${{ github.workspace }}/zip-output'
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+    # deploy-az-infrastructure:
+    #   runs-on: ubuntu-latest
+    #   steps:
+
+    #    # Authentication
+    #    # Set up the following secrets in your repository: AZURE_CREDENTIALS
+    #    # For details see https://docs.microsoft.com/en-us/azure/developer/github/connect-from-azure
+    #    - name: 'Login to Azure'
+    #      uses: azure/login@v1
+    #      with:
+    #        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    #    # Makes source code accessible via $github.workspace
+    #    - name: 'Checking out source code ...'
+    #      uses: actions/checkout@v2
+ 
+    #    # Deploy Azure function app
+    #    # Note: Using Azure CLI for deployment as it provides more verbose error messages
+    #    - name: 'Creating Azure Function App'
+    #      uses: azure/CLI@v1
+    #      with:
+    #        inlineScript: |
+    #          az deployment group create \
+    #          --name az-func-workflow-deploy \
+    #          --resource-group ${{ env.AZURE_RESOURCE_GROUP_NAME }} \
+    #          --template-file $GITHUB_WORKSPACE/src/GreetingDemo.AzArmTemplates/GreetingFunction/template.json \
+    #          --mode incremental \
+    #          --parameters $GITHUB_WORKSPACE/src/GreetingDemo.AzArmTemplates/GreetingFunction/parameters.json \
+ 
+
+    ############################################################################
+
+    deploy-az-function:
+      # needs: [deploy-az-infrastructure]
+      runs-on: ubuntu-latest
+      steps:
+      
+       # Makes source code accessible via $github.workspace
+       - name: 'Checking out source code ...'
+         uses: actions/checkout@v2
+      
+       - name: 'Package function into zip file'
+         shell: bash
+         run: |
+           mkidr ${{ env.ZIP_OUTPUT_PATH }}
+           zip -r ${{ env.ZIP_OUTPUT_PATH }}/${{ env.BUILD_PACKAGE_NAME }} \
+            ${{ env.SOURCE_FUNCTION_PATH }}
+
+       # Authentication
+       # Set up the following secrets in your repository: AZURE_CREDENTIALS
+       # For details see https://docs.microsoft.com/en-us/azure/developer/github/connect-from-azure
+       - name: 'Login to Azure'
+         uses: azure/login@v1
+         with:
+           creds: ${{ secrets.AZURE_CREDENTIALS }}
+           enable-AzPSSession: true
+       
+       - name: 'Fetching Azure Functions Publishing Profile'
+         id: fncapp
+         uses: azure/powershell@v1
+         with:
+           inlineScript: |
+               $profile = ""
+               $profile = Get-AzWebAppPublishingProfile -ResourceGroupName $env:AZURE_RESOURCE_GROUP_NAME -Name $env:AZURE_FUNCTIONAPP_NAME
+               $profile = $profile.Replace("`r", "").Replace("`n", "")
+               Write-Output "::set-output name=pubprofile::$profile"
+               Remove-Variable profile
+           azPSVersion: "latest"
+
+       # Deploy Azure functions code
+       - name: 'Run Azure Functions Action'
+         uses: azure/functions-action@v1
+         with:
+           app-name: ${{ env.AZURE_FUNCTIONAPP_NAME }}
+           package: ${{ env.ZIP_OUTPUT_PATH }}/${{ env.BUILD_PACKAGE_NAME }}
+           publish-profile: ${{ steps.fncapp.outputs.pubprofile }}

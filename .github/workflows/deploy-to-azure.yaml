@@ -60,7 +60,7 @@ jobs:
        - name: 'Package function into zip file'
          shell: bash
          run: |
-           mkidr ${{ env.ZIP_OUTPUT_PATH }}
+           mkdir ${{ env.ZIP_OUTPUT_PATH }}
            zip -r ${{ env.ZIP_OUTPUT_PATH }}/${{ env.BUILD_PACKAGE_NAME }} \
             ${{ env.SOURCE_FUNCTION_PATH }}
 

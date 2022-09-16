@@ -78,7 +78,9 @@ jobs:
          uses: azure/powershell@v1
          with:
            inlineScript: |
+               Write-Output "Getting functions"
                Get-AzFunctionApp
+               Write-Output "Finished running functions"
            azPSVersion: "latest"
 
        - name: 'Fetching Azure Functions Publishing Profile'

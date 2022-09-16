@@ -3,6 +3,6 @@
 # Manually managing azure-functions-worker may cause unexpected issues
 
 azure-functions
-sklearn
-joblib
-pandas
+# sklearn
+# joblib
+# pandas

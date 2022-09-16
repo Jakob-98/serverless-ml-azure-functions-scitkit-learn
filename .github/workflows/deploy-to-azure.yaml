@@ -74,6 +74,13 @@ jobs:
            creds: ${{ secrets.AZURE_CREDENTIALS }}
            enable-AzPSSession: true
        
+       - name: 'Listing functions'
+         uses: azure/powershell@v1
+         with:
+           inlineScript: |
+               Get-AzFunctionApp
+           azPSVersion: "latest"
+
        - name: 'Fetching Azure Functions Publishing Profile'
          id: fncapp
          uses: azure/powershell@v1

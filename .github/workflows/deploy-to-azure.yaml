@@ -1,5 +1,9 @@
 name: azure-deploy
 
+on:
+  push:
+    branches: [ master ]
+
 env:
   AZURE_RESOURCE_GROUP_NAME: 'git-actions-deploy-func-demo'
   AZURE_FUNCTIONAPP_NAME: 'func-sklearnmodel-test'

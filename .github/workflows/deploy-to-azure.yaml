@@ -9,7 +9,7 @@ env:
   AZURE_RESOURCE_GROUP_NAME: 'rg-funcdeploy-test'
   # AZURE_FUNCTIONAPP_NAME: 'func-sklearnmodel-test'
   AZURE_FUNCTIONAPP_NAME: 'fapp-funcdeploy-test'
-  SOURCE_FUNCTION_PATH: '${{ github.workspace }}/src/SklearnModelFunction'
+  SOURCE_FUNCTION_PATH: '${{ github.workspace }}/src'
   BUILD_PACKAGE_NAME: 'az-func.zip'
   ZIP_OUTPUT_PATH: '${{ github.workspace }}/zip-output'
 

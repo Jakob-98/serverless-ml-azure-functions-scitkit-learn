@@ -12,7 +12,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
     try: 
         req_body = req.get_body()
     except ValueError: 
-        return func.HttpResponse("Bad request: no body",status_code=500)
+        return func.HttpResponse("Bad request: no body",status_code=400)
     
     parsed_body = eval(req_body)
     try: 
@@ -23,7 +23,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
         model = joblib.load(pathlib.Path(__file__).parent / 'model.joblib')
         result = model.predict(df)
-
         return func.HttpResponse(str(result))
+
     except ValueError:
         return func.HttpResponse("Bad request: invalid body structure",status_code=400)

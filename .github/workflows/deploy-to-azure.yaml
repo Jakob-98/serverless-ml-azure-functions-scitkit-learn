@@ -55,11 +55,11 @@ jobs:
           working-directory: ${{ env.TERRAFORM_SOURCE_PATH }}
           run: |
             echo "1"
-            echo "$(terraform output serverless_ml_functionapp_name)"
+            echo $(terraform output serverless_ml_functionapp_name)
             echo "2"
             export functionapp_name=$(terraform output serverless_ml_functionapp_name)
             echo "3"
-            echo "::set-output name=functionapp_name::"$functionapp_name
+            echo ::set-output name=functionapp_name::$functionapp_name
             echo "4"
             echo $functionapp_name
             echo "5"

@@ -21,7 +21,6 @@ jobs:
     create-infrastructure:
       name: 'Terraform'
       runs-on: ubuntu-latest
-      environment: dev
       env:
         ARM_CLIENT_ID: ${{ secrets.AZURE_CREDENTIALS.clientId }}
         ARM_CLIENT_SECRET: ${{ secrets.AZURE_CREDENTIALS.clientSecret }}
@@ -41,6 +40,9 @@ jobs:
         - name: Checkout
           uses: actions/checkout@v3
 
+        - name: Select Terraform folder
+          run: cd ${{ github.workspace }}/terraform
+          
         - name: Setup Terraform
           uses: hashicorp/setup-terraform@v1
 

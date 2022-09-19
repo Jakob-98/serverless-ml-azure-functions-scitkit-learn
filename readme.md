@@ -1,10 +1,11 @@
-/]# Title
+Serverless ML on Azure Functions with Scikit-Learn
 This repo describes how to easily deploy an SciKit-learn model to azure functions, allowing the user to run the models 'serverlessly', on a cost-by-use basis. Alternatively, you can choose to deploy your SciKit model along the lines of [scikit-learn-model-deployment-on-azure-ml](https://learn.microsoft.com/en-us/azure/databricks/applications/mlflow/scikit-learn-model-deployment-on-azure-ml). 
 
 ## TL;DR - steps to recreate
 1. Train an sklearn classifier - save it with joblib as `model.joblib` and place it into `/src/SklearnModelFunction/`. Update `/src/requirements.txt` to match your model's dependencies. 
 2. Create a resource group on azure, note the subscription-id and resource group name. Generate & save secrets to github by following [these steps](#creating-a-service-principal-and-credentials-for-your-resource-group)
 3. **Github actions**: on-push, a github actions pipeline is triggered: `.github/workflows/deploy-to-azure.yaml`. This creates your azure functions app, as well as the python function in the app.
+
 **Azure devops**: Marco TODO
 4. Test your function endpoint
 

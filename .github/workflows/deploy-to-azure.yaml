@@ -47,7 +47,7 @@ jobs:
           run: terraform plan -var="resourcegroup_name=$AZURE_RESOURCE_GROUP_NAME" -var="environment_name=$ENVIRONMENT_NAME" -var="environment_type=$ENVIRONMENT_TYPE"
 
         - name: Terraform Apply
-          if: github.ref == 'refs/heads/master' && github.event_name == 'push'
+          if: 1 == 2 && github.ref == 'refs/heads/master' && github.event_name == 'push'
           working-directory: ${{ env.TERRAFORM_SOURCE_PATH }}
           run: terraform apply  -auto-approve -var="resourcegroup_name=$AZURE_RESOURCE_GROUP_NAME" -var="environment_name=$ENVIRONMENT_NAME" -var="environment_type=$ENVIRONMENT_TYPE"
 
@@ -69,6 +69,14 @@ jobs:
             echo "FAPPNAME="$functionapp_name >> $GITHUB_ENV
             echo "6"
 
+        - name: Get Azure Function App Name
+          run: |
+            echo "0"
+            echo "${{ steps.set_functionapp_name.outputs.functionapp_namee }}"
+            echo "1"
+            echo "${{ steps.set_functionapp_name.outputs.functionapp_name }}"
+            echo "2"
+            
     deploy_az_function:
       needs: [deploy_az_infrastructure]
       runs-on: ubuntu-latest

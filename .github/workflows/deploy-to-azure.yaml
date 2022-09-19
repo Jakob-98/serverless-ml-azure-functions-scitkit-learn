@@ -27,10 +27,10 @@ jobs:
         ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
         ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
         ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
-        TerraformBackend_StorageAccount: "strgsklearnterraform"
-        TerraformBackend_ResourceGroup: "rg-funcdeploy-test"
-        TerraformBackend_StorageContainer: "state"
-        resourcegroup_name: "strgsklearnterraform"
+        terraform_backend_storageaccount: "strgsklearnterraform"
+        terraform_backend_resourcegroup: "rg-funcdeploy-test"
+        terraform_backend_storagecontainer: "state"
+        resourcegroup_name: "rg-funcdeploy-test"
         environment_name: "sklearnmodel"
         environment_type: "dev"
 
@@ -52,7 +52,7 @@ jobs:
 
         - name: Terraform Init
           working-directory: ${{ env.Terraform_Source_Path }}
-          run: terraform init -backend-config=storage_account_name=$TerraformBackend_StorageAccount -backend-config=container_name=$TerraformBackend_StorageContainer -backend-config=key=$environment_type_$environment_name.tfstate -backend-config=resource_group_name=$TerraformBackend_ResourceGroup -backend-config=subscription_id="$ARM_SUBSCRIPTION_ID" -backend-config=tenant_id="$ARM_TENANT_ID" -backend-config=client_id="$ARM_CLIENT_ID" -backend-config=client_secret="$ARM_CLIENT_SECRET"
+          run: terraform init -backend-config=storage_account_name=$terraform_backend_storageaccount -backend-config=container_name=$terraform_backend_storagecontainer -backend-config=key=$environment_type_$environment_name.tfstate -backend-config=resource_group_name=$terraform_backend_resourcegroup -backend-config=subscription_id="$ARM_SUBSCRIPTION_ID" -backend-config=tenant_id="$ARM_TENANT_ID" -backend-config=client_id="$ARM_CLIENT_ID" -backend-config=client_secret="$ARM_CLIENT_SECRET"
 
         - name: Terraform Plan
           working-directory: ${{ env.Terraform_Source_Path }}

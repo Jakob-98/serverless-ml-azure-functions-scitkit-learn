@@ -41,6 +41,7 @@ jobs:
           run: terraform init -backend-config=storage_account_name=$TERRAFORM_BACKEND_STORAGEACCOUNT -backend-config=container_name=$TERRAFORM_BACKEND_STORAGECONTAINER -backend-config=key=$ENVIRONMENT_TYPE_$ENVIRONMENT_NAME.tfstate -backend-config=resource_group_name=$TERRAFORM_BACKEND_RESOURCEGROUP -backend-config=subscription_id="$ARM_SUBSCRIPTION_ID" -backend-config=tenant_id="$ARM_TENANT_ID" -backend-config=client_id="$ARM_CLIENT_ID" -backend-config=client_secret="$ARM_CLIENT_SECRET"
 
         - name: Terraform Plan
+          if: github.ref != 'refs/heads/master' && github.event_name == 'push'
           working-directory: ${{ env.TERRAFORM_SOURCE_PATH }}
           run: terraform plan -var="resourcegroup_name=$AZURE_RESOURCE_GROUP_NAME" -var="environment_name=$ENVIRONMENT_NAME" -var="environment_type=$ENVIRONMENT_TYPE"
 
@@ -53,9 +54,17 @@ jobs:
           id: set_functionapp_name
           working-directory: ${{ env.TERRAFORM_SOURCE_PATH }}
           run: |
+            echo "1"
+            echo "$(terraform output serverless_ml_functionapp_name)"
+            echo "2"
             export functionapp_name=$(terraform output serverless_ml_functionapp_name)
+            echo "3"
             echo "::set-output name=functionapp_name::$functionapp_name"
+            echo "4"
             echo $functionapp_name
+            echo "5"
+            echo "FAPPNAME=$functionapp_name" >> $GITHUB_ENV
+            echo "6"
 
     deploy_az_function:
       needs: [deploy_az_infrastructure]
@@ -68,7 +77,11 @@ jobs:
       steps:
        - name: Get Azure Function App Name
          run: |
+            echo "1"
             echo "${{ needs.deploy_az_infrastructure.outputs.functionapp_name }}"
+            echo "2"
+            echo "${{ env.FAPPNAME }}"
+            echo "3"
 
        - name: 'Checking out source code ...'
          uses: actions/checkout@v3

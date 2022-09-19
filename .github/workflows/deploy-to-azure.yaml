@@ -82,7 +82,7 @@ jobs:
         - name: Test env vars
           run: |
             echo "0"
-            testvar=$(terraform output -raw serverless_ml_functionapp_name)
+            testvar=$(date)
             echo "1"
             echo "$testvar"
             echo "2"

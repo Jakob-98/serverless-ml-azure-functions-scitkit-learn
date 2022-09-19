@@ -54,6 +54,8 @@ jobs:
           id: set_functionapp_name
           working-directory: ${{ env.TERRAFORM_SOURCE_PATH }}
           run: |
+            echo "0"
+            echo ::set-output name=functionapp_namee::"$(terraform output serverless_ml_functionapp_name)"
             echo "1"
             echo $(terraform output serverless_ml_functionapp_name)
             echo "2"
@@ -77,6 +79,8 @@ jobs:
       steps:
        - name: Get Azure Function App Name
          run: |
+            echo "0"
+            echo "${{ needs.deploy_az_infrastructure.outputs.functionapp_namee }}"
             echo "1"
             echo "${{ needs.deploy_az_infrastructure.outputs.functionapp_name }}"
             echo "2"

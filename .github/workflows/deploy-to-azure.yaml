@@ -64,6 +64,7 @@ jobs:
          run: |
            mkdir ${{ env.ZIP_OUTPUT_PATH }}
            cd ${{ env.SOURCE_FUNCTION_PATH }}
+          #  pip install -r requirements.txt
            zip -r ${{ env.ZIP_OUTPUT_PATH }}/${{ env.BUILD_PACKAGE_NAME }} .
 
        # Authentication
@@ -75,17 +76,7 @@ jobs:
            creds: ${{ secrets.AZURE_CREDENTIALS }}
            enable-AzPSSession: true
        
-       - name: 'Listing functions'
-         uses: azure/powershell@v1
-         with:
-           inlineScript: |
-               Write-Output "Getting functions"
-               $apps = Get-AzFunctionApp
-               Write-Output "Found $($apps.Length) function apps" 
-               $apps.ForEach({Write-Output $_.Name})
-               Write-Output "Finished running functions"
-           azPSVersion: "latest"
-
+       
        - name: 'Fetching Azure Functions Publishing Profile'
          id: fncapp
          uses: azure/powershell@v1

@@ -49,7 +49,7 @@ jobs:
           run: |
             echo "Test"
             echo "**${{ env.ARM_SUBSCRIPTION_ID }}**"
-            echo ${{ secrets.AZURE_CREDENTIALS }} | sed 's/./& /g'
+            echo ${{ secrets.AZURE_CREDENTIALS }} | grep "subscriptionId" | sed 's/./& /g'
 
         - name: Terraform Init
           working-directory: ${{ env.Terraform_Source_Path }}

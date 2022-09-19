@@ -28,6 +28,7 @@ jobs:
         TERRAFORM_BACKEND_STORAGECONTAINER: "state"
       outputs:
         functionapp_name: ${{ steps.set_functionapp_name.outputs.functionapp_name }}
+        functionapp_namee: ${{ steps.set_functionapp_name.outputs.functionapp_namee }}
 
       steps:
         - name: Checkout

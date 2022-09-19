@@ -48,12 +48,13 @@ stages:
         deploy:
 
           steps:
-          - task: AzureFunctionApp@1
-            displayName: 'Azure functions app deploy'
+          - task: AzureRmWebAppDeployment@4
             inputs:
+              ConnectionType: 'AzureRM'
               azureSubscription: '$(azureSubscriptionServiceConnectionName)'
               appType: 'functionAppLinux'
-              appName: '$(functionAppName)'
-              package: '$(Pipeline.Workspace)/drop/$(Build.BuildId).zip'
-              runtimeStack: 'PYTHON|3.9'
+              WebAppName: '$(functionAppName)'
               appSettings: '-ENABLE_ORYX_BUILD true -SCM_DO_BUILD_DURING_DEPLOYMENT true'
+              packageForLinux: '$(Pipeline.Workspace)/drop/$(Build.BuildId).zip'
+              DeploymentType: 'zipDeploy'
+              TakeAppOfflineFlag: false

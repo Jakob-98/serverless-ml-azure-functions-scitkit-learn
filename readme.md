@@ -35,7 +35,8 @@ print(accuracy_score(ytest, y_pred_test))
 ```
 
 ### Saving the model
-Using the joblib library we dump the model into `model.joblib` - Note, this model is now saved in the `./randomforest_example/model` folder and should be (manually) placed in the `/SklearnModelFunction/` folder to deploy it in later steps. 
+Using the joblib library we dump the model into `model.joblib`
+**!!Note** -  this model is now saved in the `./randomforest_example/model` folder and should be (manually) placed in the `/SklearnModelFunction/` folder to deploy it in later steps. 
 ```py
 joblib.dump(clf, "./model/model.joblib")
 ```

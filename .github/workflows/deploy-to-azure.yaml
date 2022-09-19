@@ -55,6 +55,7 @@ jobs:
           run: |
             export functionapp_name=$(terraform output serverless_ml_functionapp_name)
             echo "::set-output name=functionapp_name::$functionapp_name"
+            echo $functionapp_name
 
     deploy_az_function:
       needs: [deploy_az_infrastructure]

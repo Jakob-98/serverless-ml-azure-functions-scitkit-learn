@@ -60,3 +60,7 @@ resource "azurerm_function_app" "serverless_ml_functionapp" {
     ftps_state       = "Disabled"
   }
 }
+
+output "serverless_ml_functionapp_name" {
+  value = azurerm_function_app.serverless_ml_functionapp.name
+}

@@ -1,4 +1,5 @@
-Serverless ML on Azure Functions with Scikit-Learn
+#Serverless ML on Azure Functions with Scikit-Learn
+
 This repo describes how to easily deploy an SciKit-learn model to azure functions, allowing the user to run the models 'serverlessly', on a cost-by-use basis. Alternatively, you can choose to deploy your SciKit model along the lines of [scikit-learn-model-deployment-on-azure-ml](https://learn.microsoft.com/en-us/azure/databricks/applications/mlflow/scikit-learn-model-deployment-on-azure-ml). 
 
 ## TL;DR - steps to recreate

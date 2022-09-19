@@ -14,7 +14,7 @@ defaults:
     shell: bash
 
 jobs:
-    deploy:
+    deploy_az_infrastructure:
       name: 'Terraform'
       runs-on: ubuntu-latest
       env:
@@ -26,6 +26,8 @@ jobs:
         TERRAFORM_BACKEND_STORAGEACCOUNT: "strgsklearnterraform"
         TERRAFORM_BACKEND_RESOURCEGROUP: "rg-funcdeploy-test"
         TERRAFORM_BACKEND_STORAGECONTAINER: "state"
+      outputs:
+        functionapp_name: ${{ steps.set_functionapp_name.outputs.functionapp_name }}
 
       steps:
         - name: Checkout
@@ -55,7 +57,7 @@ jobs:
             echo "::set-output name=functionapp_name::$functionapp_name"
 
     deploy_az_function:
-      needs: [deploy]
+      needs: [deploy_az_infrastructure]
       runs-on: ubuntu-latest
       env:
         source_function_path: '${{ github.workspace }}/src'
@@ -65,8 +67,7 @@ jobs:
       steps:
        - name: Get Azure Function App Name
          run: |
-            echo "${{ deploy.steps.set_functionapp_name.outputs.functionapp_name }}"
-            echo "${{ steps.set_functionapp_name.outputs.functionapp_name }}"
+            echo "${{ needs.deploy_az_infrastructure.outputs.functionapp_name }}"
 
        - name: 'Checking out source code ...'
          uses: actions/checkout@v3

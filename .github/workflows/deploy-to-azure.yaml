@@ -59,11 +59,11 @@ jobs:
             echo "2"
             export functionapp_name=$(terraform output serverless_ml_functionapp_name)
             echo "3"
-            echo "::set-output name=functionapp_name::$functionapp_name"
+            echo "::set-output name=functionapp_name::"$functionapp_name
             echo "4"
             echo $functionapp_name
             echo "5"
-            echo "FAPPNAME=$functionapp_name" >> $GITHUB_ENV
+            echo "FAPPNAME="$functionapp_name >> $GITHUB_ENV
             echo "6"
 
     deploy_az_function:

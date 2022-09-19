@@ -53,7 +53,7 @@ jobs:
           id: set_functionapp_name
           working-directory: ${{ env.TERRAFORM_SOURCE_PATH }}
           run: |
-            functionapp_name=$(terraform output serverless_ml_functionapp_name)
+            export functionapp_name=$(terraform output serverless_ml_functionapp_name)
             echo "::set-output name=functionapp_name::$functionapp_name"
 
     deploy_az_function:

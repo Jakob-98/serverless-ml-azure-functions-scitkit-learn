@@ -1,4 +1,3 @@
-import logging
 from sklearn.ensemble import RandomForestClassifier as RF
 import joblib
 import pandas as pd

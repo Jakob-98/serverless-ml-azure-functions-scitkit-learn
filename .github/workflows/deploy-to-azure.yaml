@@ -14,7 +14,7 @@ defaults:
     shell: bash
 
 jobs:
-    deploy-az-infrastructure:
+    deploy:
       name: 'Terraform'
       runs-on: ubuntu-latest
       env:
@@ -54,8 +54,8 @@ jobs:
             functionapp_name=$(terraform output serverless_ml_functionapp_name)
             echo "::set-output name=functionapp_name::$functionapp_name"
 
-    deploy-az-function:
-      needs: [deploy-az-infrastructure]
+    deploy_az_function:
+      needs: [deploy]
       runs-on: ubuntu-latest
       env:
         source_function_path: '${{ github.workspace }}/src'
@@ -65,7 +65,7 @@ jobs:
       steps:
        - name: Get Azure Function App Name
          run: |
-            echo "${{ deploy-az-infrastructure.steps.set_functionapp_name.outputs.functionapp_name }}"
+            echo "${{ deploy.steps.set_functionapp_name.outputs.functionapp_name }}"
             echo "${{ steps.set_functionapp_name.outputs.functionapp_name }}"
 
        - name: 'Checking out source code ...'

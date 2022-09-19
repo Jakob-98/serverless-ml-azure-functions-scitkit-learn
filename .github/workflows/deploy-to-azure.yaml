@@ -34,12 +34,6 @@ jobs:
         - name: Setup Terraform
           uses: hashicorp/setup-terraform@v1
 
-        - name: Test
-          working-directory: ${{ env.TERRAFORM_SOURCE_PATH }}
-          run: |
-            echo "Test"
-            echo "**${{ env.ARM_SUBSCRIPTION_ID }}**"
-
         - name: Terraform Init
           working-directory: ${{ env.TERRAFORM_SOURCE_PATH }}
           run: terraform init -backend-config=storage_account_name=$TERRAFORM_BACKEND_STORAGEACCOUNT -backend-config=container_name=$TERRAFORM_BACKEND_STORAGECONTAINER -backend-config=key=$ENVIRONMENT_TYPE_$ENVIRONMENT_NAME.tfstate -backend-config=resource_group_name=$TERRAFORM_BACKEND_RESOURCEGROUP -backend-config=subscription_id="$ARM_SUBSCRIPTION_ID" -backend-config=tenant_id="$ARM_TENANT_ID" -backend-config=client_id="$ARM_CLIENT_ID" -backend-config=client_secret="$ARM_CLIENT_SECRET"
@@ -49,13 +43,18 @@ jobs:
           run: terraform plan -var="resourcegroup_name=$AZURE_RESOURCE_GROUP_NAME" -var="environment_name=$ENVIRONMENT_NAME" -var="environment_type=$ENVIRONMENT_TYPE"
 
         - name: Terraform Apply
+          id: terraform_apply
           if: github.ref == 'refs/heads/master' && github.event_name == 'push'
           working-directory: ${{ env.TERRAFORM_SOURCE_PATH }}
           run: terraform apply  -auto-approve -var="resourcegroup_name=$AZURE_RESOURCE_GROUP_NAME" -var="environment_name=$ENVIRONMENT_NAME" -var="environment_type=$ENVIRONMENT_TYPE"
 
         - name: Set Azure Function App Name
           working-directory: ${{ env.TERRAFORM_SOURCE_PATH }}
-          run: echo "AZURE_FUNCTIONAPP_NAME=$(terraform output serverless_ml_functionapp_name)" >> $GITHUB_ENV
+          run: |
+            echo "${{ steps.terraform_apply.outputs.serverless_ml_functionapp_name }}"
+            echo "1"
+            functionapp_name=$(terraform output serverless_ml_functionapp_name)
+            echo "$functionapp_name"
 
     deploy-az-function:
       needs: [deploy-az-infrastructure]

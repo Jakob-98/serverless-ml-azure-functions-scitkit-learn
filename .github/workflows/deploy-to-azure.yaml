@@ -49,7 +49,7 @@ jobs:
           run: terraform plan -var="resourcegroup_name=$AZURE_RESOURCE_GROUP_NAME" -var="environment_name=$ENVIRONMENT_NAME" -var="environment_type=$ENVIRONMENT_TYPE"
 
         - name: Terraform Apply
-          if: 1 == 2 && github.ref == 'refs/heads/master' && github.event_name == 'push'
+          if: github.ref == 'refs/heads/master' && github.event_name == 'push'
           working-directory: ${{ env.TERRAFORM_SOURCE_PATH }}
           run: terraform apply  -auto-approve -var="resourcegroup_name=$AZURE_RESOURCE_GROUP_NAME" -var="environment_name=$ENVIRONMENT_NAME" -var="environment_type=$ENVIRONMENT_TYPE"
 
@@ -57,39 +57,8 @@ jobs:
           id: set_functionapp_name
           working-directory: ${{ env.TERRAFORM_SOURCE_PATH }}
           run: |
-            echo "0"
-            echo ::set-output name=functionapp_namee::"$(terraform output -raw serverless_ml_functionapp_name)"
-            echo "1"
-            echo $(terraform output serverless_ml_functionapp_name)
-            echo "2"
-            export functionapp_name=$(terraform output -raw serverless_ml_functionapp_name)
-            echo "3"
-            echo $functionapp_name
-            echo "3.5"
-            echo ::set-output name=functionapp_name::$functionapp_name
-            echo "4"
-            echo $functionapp_name
-            echo "5"
-            echo "FAPPNAME="$functionapp_name >> $GITHUB_ENV
-            echo "6"
+            echo ::set-output name=functionapp_name::"$(terraform output -raw serverless_ml_functionapp_name)"
 
-        - name: Get Azure Function App Name
-          run: |
-            echo "0"
-            echo "${{ steps.set_functionapp_name.outputs.functionapp_namee }}"
-            echo "1"
-            echo "${{ steps.set_functionapp_name.outputs.functionapp_name }}"
-            echo "2"
-
-        - name: Test env vars
-          working-directory: ${{ github.workspace }}
-          run: |
-            echo "0"
-            testvar=$(cat loremipsum)
-            echo "1"
-            echo "$testvar"
-            echo "2"
-            
     deploy_az_function:
       needs: [deploy_az_infrastructure]
       runs-on: ubuntu-latest
@@ -101,13 +70,7 @@ jobs:
       steps:
        - name: Get Azure Function App Name
          run: |
-            echo "0"
-            echo "${{ needs.deploy_az_infrastructure.outputs.functionapp_namee }}"
-            echo "1"
             echo "${{ needs.deploy_az_infrastructure.outputs.functionapp_name }}"
-            echo "2"
-            echo "${{ env.FAPPNAME }}"
-            echo "3"
 
        - name: 'Checking out source code ...'
          uses: actions/checkout@v3
@@ -130,7 +93,7 @@ jobs:
          with:
            inlineScript: |
                $profile = ""
-               $profile = Get-AzWebAppPublishingProfile -ResourceGroupName $env:AZURE_RESOURCE_GROUP_NAME -Name $env:AZURE_FUNCTIONAPP_NAME
+               $profile = Get-AzWebAppPublishingProfile -ResourceGroupName $env:AZURE_RESOURCE_GROUP_NAME -Name ${{ needs.deploy_az_infrastructure.outputs.functionapp_name }}
                $profile = $profile.Replace("`r", "").Replace("`n", "")
                Write-Output "::set-output name=pubprofile::$profile"
                Remove-Variable profile
@@ -139,7 +102,7 @@ jobs:
        - name: 'Run Azure Functions Action'
          uses: azure/functions-action@v1
          with:
-           app-name: ${{ env.AZURE_FUNCTIONAPP_NAME }}
+           app-name: ${{ needs.deploy_az_infrastructure.outputs.functionapp_name }}
            package: ${{ env.zip_output_path }}/${{ env.build_package_name }}
            publish-profile: ${{ steps.fncapp.outputs.pubprofile }}
            scm-do-build-during-deployment: true

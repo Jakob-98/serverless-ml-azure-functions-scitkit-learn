@@ -5,10 +5,11 @@ This repo describes how to easily deploy an SciKit-learn model to azure function
 ## TL;DR - steps to recreate
 1. Train an sklearn classifier - save it with joblib as `model.joblib` and place it into `/src/SklearnModelFunction/`. Update `/src/requirements.txt` to match your model's dependencies. 
 2. Create a resource group on azure, note the subscription-id and resource group name. Generate & save secrets to github by following [these steps](#creating-a-service-principal-and-credentials-for-your-resource-group)
-3. **Github actions**: on-push, a github actions pipeline is triggered: `.github/workflows/deploy-to-azure.yaml`. This creates your azure functions app, as well as the python function in the app.
+3. Add the resource group name to `env: AZURE_RESOURCE_GROUP_NAME = ""` in `.github/workflows/deploy-to-azure.yaml`.
+4. **Github actions**: on-push, a github actions pipeline is triggered: `.github/workflows/deploy-to-azure.yaml`. This creates your azure functions app, as well as the python function in the app.
 
 **Azure devops**: Marco TODO
-4. Test your function endpoint
+5. Test your function endpoint
 
 
 ## Creating an sklearn model

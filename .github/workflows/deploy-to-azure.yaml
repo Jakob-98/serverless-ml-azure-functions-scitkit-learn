@@ -80,9 +80,10 @@ jobs:
             echo "2"
 
         - name: Test env vars
+          working-directory: ${{ github.workspace }}
           run: |
             echo "0"
-            testvar=$(date)
+            testvar=$(cat loremipsum)
             echo "1"
             echo "$testvar"
             echo "2"

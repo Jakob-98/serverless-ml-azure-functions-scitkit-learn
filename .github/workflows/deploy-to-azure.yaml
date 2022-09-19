@@ -44,6 +44,12 @@ jobs:
         - name: Setup Terraform
           uses: hashicorp/setup-terraform@v1
 
+        - name: Test2
+          uses: edwardgeorge/jq-action@main
+          with:
+            input: "[{\"num\": 1}, {\"num\": 2}]"
+            script: "[.[] | select(.num == 1) | .num]"
+
         - name: Test
           working-directory: ${{ env.Terraform_Source_Path }}
           run: |

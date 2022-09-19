@@ -5,13 +5,9 @@ on:
     branches: [ master ]
 
 env:
-  # AZURE_RESOURCE_GROUP_NAME: 'git-actions-deploy-func-demo'
   AZURE_RESOURCE_GROUP_NAME: 'rg-funcdeploy-test'
-  AZURE_FUNCTIONAPP_NAME: 'func-sklearnmodel-test'
-  # AZURE_FUNCTIONAPP_NAME: 'fapp-funcdeploy-test'
-  SOURCE_FUNCTION_PATH: '${{ github.workspace }}/src'
-  BUILD_PACKAGE_NAME: 'az-func.zip'
-  ZIP_OUTPUT_PATH: '${{ github.workspace }}/zip-output'
+  ENVIRONMENT_NAME: "sklearnmodel"
+  ENVIRONMENT_TYPE: "dev"
 
 defaults:
   run:
@@ -22,21 +18,15 @@ jobs:
       name: 'Terraform'
       runs-on: ubuntu-latest
       env:
-        Terraform_Source_Path: '${{ github.workspace }}/terraform'
         ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
         ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
         ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
         ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
-        terraform_backend_storageaccount: "strgsklearnterraform"
-        terraform_backend_resourcegroup: "rg-funcdeploy-test"
-        terraform_backend_storagecontainer: "state"
-        resourcegroup_name: "rg-funcdeploy-test"
-        environment_name: "sklearnmodel"
-        environment_type: "dev"
+        TERRAFORM_SOURCE_PATH: '${{ github.workspace }}/terraform'
+        TERRAFORM_BACKEND_STORAGEACCOUNT: "strgsklearnterraform"
+        TERRAFORM_BACKEND_RESOURCEGROUP: "rg-funcdeploy-test"
+        TERRAFORM_BACKEND_STORAGECONTAINER: "state"
 
-      defaults:
-        run:
-          shell: bash
       steps:
         - name: Checkout
           uses: actions/checkout@v3
@@ -45,35 +35,45 @@ jobs:
           uses: hashicorp/setup-terraform@v1
 
         - name: Test
-          working-directory: ${{ env.Terraform_Source_Path }}
+          working-directory: ${{ env.TERRAFORM_SOURCE_PATH }}
           run: |
             echo "Test"
             echo "**${{ env.ARM_SUBSCRIPTION_ID }}**"
 
         - name: Terraform Init
-          working-directory: ${{ env.Terraform_Source_Path }}
-          run: terraform init -backend-config=storage_account_name=$terraform_backend_storageaccount -backend-config=container_name=$terraform_backend_storagecontainer -backend-config=key=$environment_type_$environment_name.tfstate -backend-config=resource_group_name=$terraform_backend_resourcegroup -backend-config=subscription_id="$ARM_SUBSCRIPTION_ID" -backend-config=tenant_id="$ARM_TENANT_ID" -backend-config=client_id="$ARM_CLIENT_ID" -backend-config=client_secret="$ARM_CLIENT_SECRET"
+          working-directory: ${{ env.TERRAFORM_SOURCE_PATH }}
+          run: terraform init -backend-config=storage_account_name=$TERRAFORM_BACKEND_STORAGEACCOUNT -backend-config=container_name=$TERRAFORM_BACKEND_STORAGECONTAINER -backend-config=key=$ENVIRONMENT_TYPE_$ENVIRONMENT_NAME.tfstate -backend-config=resource_group_name=$TERRAFORM_BACKEND_RESOURCEGROUP -backend-config=subscription_id="$ARM_SUBSCRIPTION_ID" -backend-config=tenant_id="$ARM_TENANT_ID" -backend-config=client_id="$ARM_CLIENT_ID" -backend-config=client_secret="$ARM_CLIENT_SECRET"
 
         - name: Terraform Plan
-          working-directory: ${{ env.Terraform_Source_Path }}
-          run: terraform plan -out=plan.tfplan -input=false -var="resourcegroup_name=$resourcegroup_name" -var="environment_name=$environment_name" -var="environment_type=$environment_type"
+          working-directory: ${{ env.TERRAFORM_SOURCE_PATH }}
+          run: terraform plan -var="resourcegroup_name=$AZURE_RESOURCE_GROUP_NAME" -var="environment_name=$ENVIRONMENT_NAME" -var="environment_type=$ENVIRONMENT_TYPE"
+
+        - name: Terraform Apply
+		      if: github.ref == 'refs/heads/master' && github.event_name == 'push'
+          working-directory: ${{ env.TERRAFORM_SOURCE_PATH }}
+          run: terraform apply  -auto-approve -var="resourcegroup_name=$AZURE_RESOURCE_GROUP_NAME" -var="environment_name=$ENVIRONMENT_NAME" -var="environment_type=$ENVIRONMENT_TYPE"
+
+        - name: Set Azure Function App Name
+          working-directory: ${{ env.TERRAFORM_SOURCE_PATH }}
+          run: echo "AZURE_FUNCTIONAPP_NAME=$(terraform output serverless_ml_functionapp_name)" >> $GITHUB_ENV
 
     deploy-az-function:
       needs: [deploy-az-infrastructure]
       runs-on: ubuntu-latest
-      steps:
-      
-       # Makes source code accessible via $github.workspace
+	  env:
+        source_function_path: '${{ github.workspace }}/src'
+	    build_package_name: 'az-func.zip'
+	    zip_output_path: '${{ github.workspace }}/zip-output'
+	  
+      steps:      
        - name: 'Checking out source code ...'
          uses: actions/checkout@v3
       
        - name: 'Package function into zip file'
-         shell: bash
          run: |
-           mkdir ${{ env.ZIP_OUTPUT_PATH }}
-           cd ${{ env.SOURCE_FUNCTION_PATH }}
-           #  pip install -r requirements.txt
-           zip -r ${{ env.ZIP_OUTPUT_PATH }}/${{ env.BUILD_PACKAGE_NAME }} .
+           mkdir ${{ env.zip_output_path }}
+           cd ${{ env.source_function_path }}
+           zip -r ${{ env.zip_output_path }}/${{ env.build_package_name }} .
 
        - name: 'Login to Azure'
          uses: azure/login@v1
@@ -93,12 +93,11 @@ jobs:
                Remove-Variable profile
            azPSVersion: "latest"
 
-       # Deploy Azure functions code
        - name: 'Run Azure Functions Action'
          uses: azure/functions-action@v1
          with:
            app-name: ${{ env.AZURE_FUNCTIONAPP_NAME }}
-           package: ${{ env.ZIP_OUTPUT_PATH }}/${{ env.BUILD_PACKAGE_NAME }}
+           package: ${{ env.zip_output_path }}/${{ env.build_package_name }}
            publish-profile: ${{ steps.fncapp.outputs.pubprofile }}
            scm-do-build-during-deployment: true
            enable-oryx-build: true

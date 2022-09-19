@@ -43,18 +43,16 @@ jobs:
           run: terraform plan -var="resourcegroup_name=$AZURE_RESOURCE_GROUP_NAME" -var="environment_name=$ENVIRONMENT_NAME" -var="environment_type=$ENVIRONMENT_TYPE"
 
         - name: Terraform Apply
-          id: terraform_apply
           if: github.ref == 'refs/heads/master' && github.event_name == 'push'
           working-directory: ${{ env.TERRAFORM_SOURCE_PATH }}
           run: terraform apply  -auto-approve -var="resourcegroup_name=$AZURE_RESOURCE_GROUP_NAME" -var="environment_name=$ENVIRONMENT_NAME" -var="environment_type=$ENVIRONMENT_TYPE"
 
         - name: Set Azure Function App Name
+          id: set_functionapp_name
           working-directory: ${{ env.TERRAFORM_SOURCE_PATH }}
           run: |
-            echo "${{ steps.terraform_apply.outputs.serverless_ml_functionapp_name }}"
-            echo "1"
             functionapp_name=$(terraform output serverless_ml_functionapp_name)
-            echo "$functionapp_name"
+            echo "::set-output name=functionapp_name::$functionapp_name"
 
     deploy-az-function:
       needs: [deploy-az-infrastructure]
@@ -65,6 +63,11 @@ jobs:
         zip_output_path: '${{ github.workspace }}/zip-output'
 
       steps:
+       - name: Get Azure Function App Name
+         run: |
+            echo "${{ deploy-az-infrastructure.steps.set_functionapp_name.outputs.functionapp_name }}"
+            echo "${{ steps.set_functionapp_name.outputs.functionapp_name }}"
+
        - name: 'Checking out source code ...'
          uses: actions/checkout@v3
       

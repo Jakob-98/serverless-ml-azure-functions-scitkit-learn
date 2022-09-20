@@ -7,7 +7,7 @@ on:
 env:
   AZURE_RESOURCE_GROUP_NAME: 'rg-funcdeploy-test'
   ENVIRONMENT_NAME: "sklearnmodel"
-  ENVIRONMENT_TYPE: "dev"
+  ENVIRONMENT_TYPE: "mvk"
 
 defaults:
   run:

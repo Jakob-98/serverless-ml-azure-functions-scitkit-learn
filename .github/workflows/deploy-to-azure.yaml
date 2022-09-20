@@ -41,7 +41,7 @@ jobs:
 
         - name: Terraform Init
           working-directory: ${{ env.TERRAFORM_SOURCE_PATH }}
-          run: terraform init -backend-config=storage_account_name=$TERRAFORM_BACKEND_STORAGEACCOUNT -backend-config=container_name=$TERRAFORM_BACKEND_STORAGECONTAINER -backend-config=key=$ENVIRONMENT_TYPE_$ENVIRONMENT_NAME.tfstate -backend-config=resource_group_name=$TERRAFORM_BACKEND_RESOURCEGROUP -backend-config=subscription_id="$ARM_SUBSCRIPTION_ID" -backend-config=tenant_id="$ARM_TENANT_ID" -backend-config=client_id="$ARM_CLIENT_ID" -backend-config=client_secret="$ARM_CLIENT_SECRET"
+          run: terraform init -backend-config=storage_account_name="$TERRAFORM_BACKEND_STORAGEACCOUNT" -backend-config=container_name="$TERRAFORM_BACKEND_STORAGECONTAINER" -backend-config=key="${ENVIRONMENT_TYPE}_${ENVIRONMENT_NAME}.tfstate" -backend-config=resource_group_name=$TERRAFORM_BACKEND_RESOURCEGROUP -backend-config=subscription_id="$ARM_SUBSCRIPTION_ID" -backend-config=tenant_id="$ARM_TENANT_ID" -backend-config=client_id="$ARM_CLIENT_ID" -backend-config=client_secret="$ARM_CLIENT_SECRET"
 
         - name: Terraform Plan
           if: github.ref != 'refs/heads/master' && github.event_name == 'push'

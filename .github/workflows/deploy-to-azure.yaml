@@ -5,11 +5,11 @@ on:
     branches: [ master ]
 
 env:
-  AZURE_RESOURCE_GROUP_NAME: 'rg-funcdeploy-test'
-  ENVIRONMENT_NAME: "sklearnmodel"
+  AZURE_RESOURCE_GROUP_NAME: 'FunctionML'
+  ENVIRONMENT_NAME: "functionml"
   ENVIRONMENT_TYPE: "dev"
-  TERRAFORM_BACKEND_STORAGEACCOUNT: "strgsklearnterraform"
-  TERRAFORM_BACKEND_RESOURCEGROUP: "rg-funcdeploy-test"
+  TERRAFORM_BACKEND_STORAGEACCOUNT: "functionmlterraform"
+  TERRAFORM_BACKEND_RESOURCEGROUP: "FunctionML"
 
 defaults:
   run:
@@ -51,7 +51,7 @@ jobs:
         - name: Terraform Apply
           if: github.ref == 'refs/heads/master' && github.event_name == 'push'
           working-directory: ${{ env.TERRAFORM_SOURCE_PATH }}
-          run: terraform apply  -auto-approve -var="resourcegroup_name=$AZURE_RESOURCE_GROUP_NAME" -var="environment_name=$ENVIRONMENT_NAME" -var="environment_type=$ENVIRONMENT_TYPE"
+          run: terraform apply -auto-approve -var="resourcegroup_name=$AZURE_RESOURCE_GROUP_NAME" -var="environment_name=$ENVIRONMENT_NAME" -var="environment_type=$ENVIRONMENT_TYPE"
 
         - name: Set Azure Function App Name
           id: set_functionapp_name

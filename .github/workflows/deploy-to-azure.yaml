@@ -1,4 +1,4 @@
-name: azure-deploy-1
+name: azure-deploy
 
 on:
   workflow_dispatch:

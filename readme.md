@@ -11,7 +11,7 @@ This repo describes how to easily deploy an SciKit-learn model to azure function
 
 ## TL;DR - steps to reproduce using Azure Devops
 
-...
+Coming soon...
 
 ## Creating an sklearn model
 The notebook `./randomforest_example/model_creation.ipynb`shows how to create a simple randomforest model which predicts whether or not flights will be delayed by 15 minutes or more. The most important stepts are as follows: 

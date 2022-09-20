@@ -46,7 +46,7 @@ resource "azurerm_function_app" "serverless_ml_functionapp" {
 
   app_settings = {
     FUNCTIONS_WORKER_RUNTIME              = "python"
-    APPINSIGHTS_INSTRUMENTATIONKEY        =  azurerm_application_insights.serverless_ml_functionapp.instrumentation_key
+    APPINSIGHTS_INSTRUMENTATIONKEY        = azurerm_application_insights.serverless_ml_functionapp.instrumentation_key
     APPLICATIONINSIGHTS_CONNECTION_STRING = azurerm_application_insights.serverless_ml_functionapp.connection_string
   }
 

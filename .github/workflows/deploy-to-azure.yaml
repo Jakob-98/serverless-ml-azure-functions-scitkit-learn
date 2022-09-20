@@ -5,11 +5,11 @@ on:
     branches: [ master ]
 
 env:
-  AZURE_RESOURCE_GROUP_NAME: 'rg-funcdeploy-test'
-  ENVIRONMENT_NAME: "sklearnmodel"
-  ENVIRONMENT_TYPE: "dev"
-  TERRAFORM_BACKEND_STORAGEACCOUNT: "strgsklearnterraform"
-  TERRAFORM_BACKEND_RESOURCEGROUP: "rg-funcdeploy-test"
+  AZURE_RESOURCE_GROUP_NAME: 'FunctionML'
+  ENVIRONMENT_NAME: "functionml"
+  ENVIRONMENT_TYPE: "mvk"
+  TERRAFORM_BACKEND_STORAGEACCOUNT: "functionmlterraform"
+  TERRAFORM_BACKEND_RESOURCEGROUP: "FunctionML"
 
 defaults:
   run:

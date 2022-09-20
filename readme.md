@@ -49,7 +49,7 @@ joblib.dump(clf, "./model/model.joblib")
 The azure function can be found in `/src/SklearnModelFunction/`. Most importantly, this folder contains the model: `/src/SklearnModelFunction/model.joblib`, and the logic for loading the model and running a prediction: `/src/SklearnModelFunction/__init__.py`. The file `/src/requirements.txt` should contain all the requirements you import in your functions. You can find the general documentation on azure functions + python [here](https://learn.microsoft.com/en-us/azure/azure-functions/functions-reference-python?tabs=asgi%2Capplication-level).  
 
 
-## creating a service principal and credentials for your resource group
+## Creating a service principal and credentials for your resource group
 Navigate to your cloud shell in the azure portal (or use the CLI) and generate your credentials: 
 
 ```bash
@@ -63,7 +63,7 @@ copy the credentials and add them to your github secrets (under settings -> secr
 Additionally, for terraform to work correctly, manually add the following secrets as well (found in the credentials generated earlier): 
 `AZURE_CLIENT_ID`, `AZURE_CLIENT_SECRET`, `AZURE_SUBSCRIPTION_ID`, `AZURE_TENANT_ID`. 
 
-## generating predictions with the azure function
+## Generating predictions with the azure function
 In our model example, we drop 2 columns : `carrier` and `ArrDelay` when training the model. Consequently, before sending the data to your function endpoint, we should drop these columns (i.e. perform your preprocessing before sending the data to your function). Alternatively, you can solve this in your functions `__init.py__` but that is not recommended. 
 
 

@@ -45,9 +45,8 @@ resource "azurerm_function_app" "serverless_ml_functionapp" {
   os_type    = "linux"
 
   app_settings = {
-    WEBSITE_RUN_FROM_PACKAGE              = "1"
     FUNCTIONS_WORKER_RUNTIME              = "python"
-    APPINSIGHTS_INSTRUMENTATIONKEY        =  azurerm_application_insights.serverless_ml_functionapp.instrumentation_key
+    APPINSIGHTS_INSTRUMENTATIONKEY        = azurerm_application_insights.serverless_ml_functionapp.instrumentation_key
     APPLICATIONINSIGHTS_CONNECTION_STRING = azurerm_application_insights.serverless_ml_functionapp.connection_string
   }
 

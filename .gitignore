@@ -1,0 +1,21 @@
+.vscode
+.venv
+
+# Local .terraform directories
+.terraform
+
+# .tfstate files
+*.tfstate
+*.tfstate.*
+local.auto.tfvars
+local.auto.tfvars.*
+
+#Terraform lock files
+*.lock.hcl
+
+# Ignore override files as they are usually used to override resources locally and so
+# are not checked in
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json

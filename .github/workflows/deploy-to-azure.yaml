@@ -7,7 +7,9 @@ on:
 env:
   AZURE_RESOURCE_GROUP_NAME: 'rg-funcdeploy-test'
   ENVIRONMENT_NAME: "sklearnmodel"
-  ENVIRONMENT_TYPE: "mvk"
+  ENVIRONMENT_TYPE: "dev"
+  TERRAFORM_BACKEND_STORAGEACCOUNT: "strgsklearnterraform"
+  TERRAFORM_BACKEND_RESOURCEGROUP: "rg-funcdeploy-test"
 
 defaults:
   run:
@@ -23,8 +25,6 @@ jobs:
         ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
         ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
         TERRAFORM_SOURCE_PATH: '${{ github.workspace }}/terraform'
-        TERRAFORM_BACKEND_STORAGEACCOUNT: "strgsklearnterraform"
-        TERRAFORM_BACKEND_RESOURCEGROUP: "rg-funcdeploy-test"
         TERRAFORM_BACKEND_STORAGECONTAINER: "state"
       outputs:
         functionapp_name: ${{ steps.set_functionapp_name.outputs.functionapp_name }}

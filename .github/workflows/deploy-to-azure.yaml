@@ -7,7 +7,7 @@ on:
 env:
   AZURE_RESOURCE_GROUP_NAME: 'rg-funcdeploy-test'
   ENVIRONMENT_NAME: "sklearnmodel"
-  ENVIRONMENT_TYPE: "dev"
+  ENVIRONMENT_TYPE: "mvk"
 
 defaults:
   run:
@@ -93,7 +93,7 @@ jobs:
          with:
            inlineScript: |
                $profile = ""
-               $profile = Get-AzWebAppPublishingProfile -ResourceGroupName $env:AZURE_RESOURCE_GROUP_NAME -Name func-sklearnmodel-dev
+               $profile = Get-AzWebAppPublishingProfile -ResourceGroupName $env:AZURE_RESOURCE_GROUP_NAME -Name func-sklearnmodel-mvk
                $profile = $profile.Replace("`r", "").Replace("`n", "")
                Write-Output "::set-output name=pubprofile::$profile"
                Remove-Variable profile
@@ -102,7 +102,7 @@ jobs:
        - name: 'Run Azure Functions Action'
          uses: azure/functions-action@v1
          with:
-           app-name: func-sklearnmodel-dev
+           app-name: func-sklearnmodel-mvk
            package: ${{ env.zip_output_path }}/${{ env.build_package_name }}
            publish-profile: ${{ steps.fncapp.outputs.pubprofile }}
            scm-do-build-during-deployment: true

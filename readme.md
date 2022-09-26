@@ -83,7 +83,7 @@ Navigate to your function app -> functions, and grab the URL of the endpoint. As
 ```
 
 It returns the prediction (a binary variable) in the form of a list of predictions, one for each entries in the body of your POST request. 
-
+ 
 **Note:** in our model example, we drop 2 columns : `carrier` and `ArrDelay` when training the model. Consequently, before sending the data to our function endpoint, we should drop these columns. We recommand to perform such preprocessing before sending the data to your function. Alternatively, you can solve this in your functions `__init.py__` but that is not recommended. 
 
 ## License

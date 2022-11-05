@@ -43,7 +43,7 @@ clf.fit(xtrain, ytrain)
 ```
 
 ### Checking the performance of the model:
-xtest contains rows of data the model has not seen before, so we use the predicted output labels, y_pred_test and y_test to check the performance of the model  
+xtest contains rows of data the model has not seen before, so we use the predicted output labels, y_pred_test and y_test to check the performance of the model.  
 ```py
 y_pred_test = clf.predict(xtest)
 print(accuracy_score(ytest, y_pred_test))
